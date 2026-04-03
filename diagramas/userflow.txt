@@ -1,0 +1,30 @@
+User Flow
+
+# cliente.py
+
+Usuário, em um computador local, abre um uma interface por meio de um script Python acessível no desktop
+|
+v
+A interface contém duas opções de input: texto e arquivo
+|	|
+|	-> texto: usuário insere texto em um campo
+|	|
+|	-> arquivo: usuário seleciona o caminho do arquivo, ou arrasta o arquivo para a ui, ou abre uma tela de seleção de arquivo
+v
+Usuário clica em enviar os dados
+|
+v
+Usuário recebe status se a operação teve sucesso no Backend do esp32 e no servidor remoto
+
+Obs.: 
+- O usuário só consegue mandar texto ou arquivo por vez, sendo que o arquivo só pode ser 1 por vez	
+
+# server.py
+
+Usuário, no browser, abre uma url do servidor e interagi com a interface web
+|
+V
+Usuário consegue visualizar mensagens de texto, ou anexos de arquivos, em uma interface chat alike
+|
+V
+Usuário consegue copiar mensagens de texto; também consegue fazer download dos anexos, como .pdf, .zip, .exe etc
