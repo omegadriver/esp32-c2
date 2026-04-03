@@ -1,7 +1,7 @@
 # esp32-c2
 Um repositório para gerenciar o projeto de envio de dados com artefato integrado com esp32.
 
-# ENVIAR DADOS PARA SERVIDOR REMOTO
+## ENVIAR DADOS PARA SERVIDOR REMOTO
 
 SCRIPT PYTHON ENVIA DADOS PARA PORTA SERIAL
 |
