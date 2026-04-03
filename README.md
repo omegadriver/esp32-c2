@@ -3,6 +3,11 @@ Um repositório para gerenciar o projeto de envio de dados com artefato integrad
 
 ## ENVIAR DADOS PARA SERVIDOR REMOTO
 
+SCRIPT PYTHON RECEBE DADOS DO USUÁRIO NO COMPUTADOR
+
+|
+V
+
 SCRIPT PYTHON ENVIA DADOS PARA PORTA SERIAL
 
 |
