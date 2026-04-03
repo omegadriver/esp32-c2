@@ -35,3 +35,5 @@ SCRIPT NO COMPUTADOR REMOTO ESCUTA O QUE TIVER NA PASTA DE UPLOAD NO SERVIDOR RE
 - O COMPUTADOR INICIAL NÃO PRECISA ESTAR NA INTERNET
 - TODO O TRÁFEGO É VIABILIZADO PELO ESP32 QUE AGI COMO GATEWAY OU PROXY
 - NÃO HAVERÁ BLOQUEIO DE PROXY CORPORATIVO OU XDR
+
+Gargalo: Fica ineficiente enviar arquivos grandes com apenas o storage do esp32, será necessário colocar um SD se quiser mandar dados grandes como executáveis e zip grandes.
