@@ -6,6 +6,7 @@ Um repositório para gerenciar o projeto de envio de dados com artefato integrad
 SCRIPT PYTHON RECEBE DADOS DO USUÁRIO NO COMPUTADOR
 
 |
+
 V
 
 SCRIPT PYTHON ENVIA DADOS PARA PORTA SERIAL
