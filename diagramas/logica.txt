@@ -1,0 +1,65 @@
+#debug
+
+[-] 11:11:09 client procurando portas
+[+] 11:11:09 client portas encontradas: [portas]
+[+] 11:11:09 client porta COMX selecionada
+[+] 11:11:10 client enviando mensagem "hello?"
+[+] 11:11:10 esp mensagem enviada "hi!"
+[-] 11:11:10 esp iniciando conexão com wifi
+[+] 11:11:11 esp conectado com sucesso no wifi (WL_CONNECTED)
+[-] 11:11:11 info wifi:
+SSID: EscarlateLuz
+LOCALIP: 192.168.0.2
+[-] 11:11:12 esp inciando conexão com servidor
+[+] 11:11:12 esp conectado com sucesso no servidor (200 OK)
+[-] 11:11:12 client esperando tamanho do chunk
+[+] 11:11:12 esp mensagem enviada "chunk: 4096"
+[-] 11:11:13 client enviando chunks
+[-] 11:11:13 info sending:
+[........................................] 0%
+[========................................] 20%
+[================........................] 40%
+[========================................] 60%
+[================================........] 80%
+[========================================] 100%
+[+] 11:11:14 servidor dados recebidos (200 OK)
+[+] 11:11:14 info envio concluido com sucesso!
+
+
+#cliente
+
+3. Inicialização do script
+4. Procura portas seriais e suas descrições ativas, pedi para conectar (ui) 
+// Se desconectar da porta, ou conectar em outra, faz reset com o esp
+5. Conecta com o esp pela porta serial após passo 2 e cria canal de comunicação (sem reset) para prosseguir 
+  // Verifica se o esp está respondendo corretamente | bom para debug com putty
+  5.1 Envia "Hello?" (cliente so continua se receber o "Hi!") 
+  5.2 Recebe "Hi!" (esp só continua se receber o "Hello?")
+  5.3 Sai do lock
+
+10. Espera tamanho do chunk e configura e separa os bytes do arquivo separado 
+11. Espera mensagem "ready!" do esp para poder enviar os dados
+14. Envia chunk a chunk para o esp
+
+#esp
+
+1. Conexão do esp na porta serial do computador local, seguido de inicialização
+2. Entra em modo de espera: le a porta serial em busca do texto "Hello?"
+  2.1 Lê portal serial
+  2.2 Lê "Hello?" e envia pela porta "Hi?"
+  2.3 Sai do lock e envia mensagem de status 
+6. Conecta com wifi e envia status para cliente (achado o ssid, senha correta, timeout, erro etc)
+7. Envia informações básicas sobre a rede conectada
+8. Conectar com o host remoto e fazer error handling em relação a comunicação // mandar feedback de volta para o cliente e para o servidor
+12. Configura tamanho do chunk e envia para o cliente (ex: 4096 bytes)
+13. Envia mensagem "ready!" e entra em modo de espera de bytes e envia que está esperando os bytes
+15. Recebe chunk a chunk do cliente, e logo em seguida manda para o servidor remoto // chunks usados são depois descartados
+16. Recebe feedback do servidor e manda mensagem de feedback para o cliente
+
+# servidor
+
+9. Recebe conexão do esp e mostra status na web ui
+16. Recebe os dados e manda mensagem de feedback para o esp
+
+
+
