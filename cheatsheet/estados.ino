@@ -72,3 +72,39 @@ void loop() {
             break;
     }
 }
+
+// ════════════════════════════════════════════
+// DIAGRAMA UML SEQUENCIAL - FSM
+// ════════════════════════════════════════════
+//
+// Actor: setup()          System: loop()       State Machine
+//   |                         |                     |
+//   |---Serial.begin(9600)--->|                     |
+//   |                         |                     |
+//   |                         |--switch(PRIMEIRO)-->|
+//   |                         |                     |
+//   |                         |<--primeiro()--------|
+//   |                         |<--state=SEGUNDO-----|
+//   |                         |                     |
+//   |                         |--switch(SEGUNDO)--->|
+//   |                         |                     |
+//   |                         |<--segundo()---------|
+//   |                         |<--state=TERCEIRO----|
+//   |                         |                     |
+//   |                         |--switch(TERCEIRO)-->|
+//   |                         |                     |
+//   |                         |<--terceiro()--------|
+//   |                         |<--state=QUARTO------|
+//   |                         |                     |
+//   |                         |--switch(QUARTO)---->|
+//   |                         |                     |
+//   |                         |<--quarto()----------|
+//   |                         |<--state=PRIMEIRO----|
+//   |                         |                     |
+//   |                         | [Loop retorna]      |
+//   |                         |--switch(PRIMEIRO)-->|
+//   |                         |        ...          |
+//
+// FLUXO DE TRANSIÇÃO:
+// PRIMEIRO --> SEGUNDO --> TERCEIRO --> QUARTO --> PRIMEIRO (cíclico)
+// ════════════════════════════════════════════
