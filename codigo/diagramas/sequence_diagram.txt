@@ -1,0 +1,11 @@
+@startuml
+actor User
+User -> System: Request
+activate System
+System -> Database: Query
+activate Database
+Database -> System: Result
+deactivate Database
+System -> User: Response
+deactivate System
+@enduml
