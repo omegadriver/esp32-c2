@@ -1,11 +1,113 @@
-@startuml
-actor User
-User -> System: Request
-activate System
-System -> Database: Query
-activate Database
-Database -> System: Result
-deactivate Database
-System -> User: Response
-deactivate System
-@enduml
+ESP32-C2 — Diagrama de Sequência
+  Command & Control via WiFi + Serial
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+        ┌────────────┐          ┌────────────┐          ┌────────────┐          ┌────────────┐
+        │  Operador  │          │  server.py │          │   ESP32    │          │  client.py │
+        └─────┬──────┘          └─────┬──────┘          └─────┬──────┘          └─────┬──────┘
+              │                       │                        │                        │
+──────────────────────────────── FASE 1 — Operador envia comando ────────────────────────────────
+              │                       │                        │                        │
+              │  POST /command        │                        │                        │
+              │  {command,device_id}  │                        │                        │
+              │──────────────────────>│                        │                        │
+              │                       │╔══════════════════════╗│                        │
+              │                       │║ pending_commands     ║│                        │
+              │                       │║   .append(cmd)       ║│                        │
+              │                       │╚══════════════════════╝│                        │
+              │        200 OK         │                        │                        │
+              │<──────────────────────│                        │                        │
+              │                       │                        │                        │
+              │  GET /api/queue       │                        │                        │
+              │──────────────────────>│                        │                        │
+              │  [cmds pendentes]     │                        │                        │
+              │<──────────────────────│                        │                        │
+              │                       │                        │                        │
+──────────────────── FASE 2 — ESP32 polling → recebe → encaminha ────────────────────────────────
+              │                       │                        │                        │
+              │                       │   GET /command         │                        │
+              │                       │   ?deviceid=<id>       │                        │
+              │                       │<───────────────────────│                        │
+              │                       │╔══════════════════════╗│                        │
+              │                       │║ pending_commands     ║│                        │
+              │                       │║   .popleft()         ║│                        │
+              │                       │╚══════════════════════╝│                        │
+              │                       │  200 JSON              │                        │
+              │                       │  {type:"command",      │                        │
+              │                       │   payload:{command,    │                        │
+              │                       │   timeoutms, shell…}}  │                        │
+              │                       │───────────────────────>│                        │
+              │                       │                        │╔══════════════════════╗│
+              │                       │                        │║ FSM: FWD_TO_CLIENT   ║│
+              │                       │                        │╚══════════════════════╝│
+              │                       │                        │  Serial.println(json)  │
+              │                       │                        │  [UART 115200 baud]    │
+              │                       │                        │───────────────────────>│
+              │                       │                        │                        │
+──────────────────── FASE 3 — Client executa comando e devolve resultado ────────────────────────
+              │                       │                        │                        │
+              │                       │                        │                        │╔══════════════════╗
+              │                       │                        │                        │║ readline()       ║
+              │                       │                        │                        │║ json.loads()     ║
+              │                       │                        │                        │║ subprocess.run() ║
+              │                       │                        │                        │║ b64encode(stdout)║
+              │                       │                        │                        │╚══════════════════╝
+              │                       │                        │   ser.write(result)    │
+              │                       │                        │   {type:"command_result│
+              │                       │                        │    stdout_b64,exitcode}│
+              │                       │                        │<───────────────────────│
+              │                       │                        │╔══════════════════════╗│
+              │                       │                        │║ Serial.readUntil()   ║│
+              │                       │                        │║ valida type=result   ║│
+              │                       │                        │╚══════════════════════╝│
+              │                       │                        │                        │
+──────────────────── FASE 4 — ESP32 entrega resultado → Operador visualiza ──────────────────────
+              │                       │                        │                        │
+              │                       │   POST /result         │                        │
+              │                       │   {type:"command_result│                        │
+              │                       │    stdout_b64,exitcode,│                        │
+              │                       │    executionms…}       │                        │
+              │                       │<───────────────────────│                        │
+              │                       │╔══════════════════════╗│                        │
+              │                       │║ results.append(msg)  ║│                        │
+              │                       │╚══════════════════════╝│                        │
+              │                       │        200 OK          │                        │
+              │                       │───────────────────────>│                        │
+              │                       │                        │╔══════════════════════╗│
+              │                       │                        │║ ctx reset            ║│
+              │                       │                        │║ FSM: FETCH_COMMAND   ║│
+              │                       │                        │╚══════════════════════╝│
+              │                       │                        │                        │
+              │  GET /api/results     │                        │                        │
+              │  (auto-refresh 5s)    │                        │                        │
+              │──────────────────────>│                        │                        │
+              │  [{stdout_b64,        │                        │                        │
+              │    exitcode,          │                        │                        │
+              │    executionms}…]     │                        │                        │
+              │<──────────────────────│                        │                        │
+              │╔════════════════════╗ │                        │                        │
+              │║ renderiza no       ║ │                        │                        │
+              │║ browser            ║ │                        │                        │
+              │╚════════════════════╝ │                        │                        │
+              │                       │                        │                        │
+              │           [↻ loop reinicia — ESP32 volta a FETCH_COMMAND]              │
+              │                       │                        │                        │
+        ┌─────┴──────┐          ┌─────┴──────┐          ┌─────┴──────┐            ┌─────┴──────┐
+        │  Operador  │          │  server.py │          │   ESP32    │            │  client.py │
+        └────────────┘          └────────────┘          └────────────┘            └────────────┘
+
+
+
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+  Legenda
+  ──────────────────────────────────────────────────────────────────────────────────────────
+  ──────────────────────────────────>   requisição / mensagem
+  <──────────────────────────────────   resposta
+  ╔══════════╗
+  ║  ação    ║   processamento interno
+  ╚══════════╝
+  ── FASE N ──   agrupamento lógico
+
+  Timeout: se client.py não responder em 30 s, ESP32 reseta ctx e volta a CONNECT.
