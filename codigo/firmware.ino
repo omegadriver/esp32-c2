@@ -4,10 +4,10 @@
 #include <Arduino_JSON.h>
 
 // ── configuração ─────────────────────────────────────────────────────
-const char* WIFI_SSID         = "EscarlateLuz";
-const char* WIFI_PASSWORD     = "Bjebclhkevrf45";
-const char* SERVER_URL        = "http://ec2.omegadriver.cloud:8000";
-const char* DEVICE_ID         = "b7d412b0-6953-45a9-8bab-680796f8e927";
+const char* WIFI_SSID         = "SSID";
+const char* WIFI_PASSWORD     = "PASSWORD";
+const char* SERVER_URL        = "SERVER_URL";
+const char* DEVICE_ID         = "DEVICE_ID";
 
 const int   SERIAL_BAUD       = 115200;
 const int   POLL_DELAY_MS     = 3000;
